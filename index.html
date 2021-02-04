@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>maptilesITB</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.6.0/leaflet.js"></script>
+
+  <! –– Kopas Dari Sini ––>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="./template/plugin/L.Control.MousePosition.css" />
+  <link rel="stylesheet" href="/template/plugin/L.Control.BetterScale.css" />
+  <link rel="stylesheet" href="/template/plugin/Control.MiniMap.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" type="text/javascript"></script>
+  <script type = "text/javascript" src = "./template/plugin/L.Control.MousePosition.js"></script>
+  <script type = "text/javascript" src = "./template/plugin/L.Control.BetterScale.js"></script> 
+  <script type = "text/javascript" src = "./template/plugin/Leaflet.Graticule.js"></script>  
+  <script type = "text/javascript" src = "./template/plugin/Control.MiniMap.js"></script>  
+  <! –– Sampai Sini ––>
+  
+  <script>
+      var layer;
+      function init() {
+          layer = L.tileLayer('{z}/{x}/{y}.png', {
+              minZoom: 16,
+              maxZoom: 21,
+              opacity: 1,
+              tms: false
+          });
+
+          var OSM_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+              minZoom: 16,
+              attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            });
+          var esri_topo = L.tileLayer( 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+              minZoom: 16,
+              attribution: 'Tiles © <a href="https://services.arcgisonline.com/ArcGIS/' + 'rest/services/World_Topo_Map/MapServer">ArcGIS</a>'
+            });
+          var satellite = L.tileLayer( 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+              minZoom: 16,
+              attribution: 'Copyright:© 2013 <a href="https://www.esri.com">ESRI</a>, i-cubed, GeoEyeESRI'
+            });
+
+          var bounds = new L.LatLngBounds(
+              new L.LatLng(-6.893267, 107.609869),
+              new L.LatLng(-6.890093, 107.613444));
+          var map = L.map('map', {
+            layers: [satellite, layer]
+          }).fitBounds(bounds);
+
+          var baseMaps = {
+            'ESRI Street': esri_topo,
+            'OSM': OSM_Mapnik,
+            'ESRI Imagery': satellite,
+          };
+
+          var overlayMaps = {
+              "Layers": layer,
+          };
+
+          L.control.layers(baseMaps, overlayMaps, {position: 'bottomright'}).addTo(map);
+          
+        // KOPAS DARI SINI
+        L.control.mousePosition().addTo(map);
+
+        L.control.betterscale().addTo(map)
+        L.control.betterscale({
+          position: "bottomleft"
+        }).addTo(map)
+  
+        L.latlngGraticule({
+          showLabel: true,
+          color: '#222',
+        }).addTo(map);
+
+        $(function () {
+          var newParent = document.getElementById('scala');
+          var oldParent = document.getElementsByClassName("leaflet-top leaflet-right")
+
+          while (oldParent[0].childNodes.length > 0) {
+            newParent.appendChild(oldParent[0].childNodes[0]);
+          }
+        });
+        var osm2 = new L.TileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {minZoom: 0, maxZoom: 13});
+        var miniMap = new L.Control.MiniMap(osm2, { toggleDisplay: true}).addTo(map);  
+      }
+      
+  </script>
+  <style>
+    #map { position:absolute; top:0; bottom:0; width:70%; z-index: 1; margin: 2%; }
+    #slider{ position: absolute; top: 10px; right: 10px; z-index: 5; }
+    .card .card-content{ overflow-y: scroll; max-height: 100vh; overflow: auto}
+    body{height: 100%; overflow: hidden}
+    @media screen and (max-width: 600px){
+      #map{ width:96.5%; max-height: 450px;}
+      .row{top:440px; position: relative; }
+      .card .card-content{ overflow-y:hidden; height: 100%; overflow: hidden}
+      body{overflow: auto}
+    }
+  </style>
+</head>
+<body onload="init()" >
+  <div id="map" class="card-content"></div>
+  <input id="slider" type="range" min="0" max="1" step="0.1" value="1" 
+    oninput="layer.setOpacity(this.value)" style="width:25%">
+  <div class="row">
+    <div class="col s11 m3 l3" id="kotak" style="top: 45px; right: 10px; position: absolute;">
+      <div class="card" style="background-color:white; text-align: center; margin-top: 0;  ">
+        <div class="card-content">
+          <h5 style="margin: 0 auto 0 auto;"><b>Peta Foto Udara Kampus ITB</b></h5>
+          <hr>
+          <img style="width: 15%;"
+          src="https://www.pinclipart.com/picdir/big/52-520340_file-north-pointer-svg-wikimedia-commons-arrow-clip.png">
+          <br>
+          <div id="scala" style="  display: table; margin: 0 auto; "></div>
+          <hr>
+          <img style="width: 70%;" src="./template/image/inset.jpg">
+          <hr>
+          <p style="font-size: 13px;">
+             Resolusi : <strong>5 cm</strong> <br>
+             Proyeksi : <strong>EPSG4326</strong><br>
+             Kamera : <strong>Dji Phantom 3 Standard</strong><br>
+             Diambil pada : <strong>Minggu, 23 Februari 2020</strong>
+             </p>
+          <hr>
+          <img style="width: 90%;" src="./template/image/icon.jpg">
+          <p style="font-size: 9px;">
+            This website using JS plugin by <a href="https://github.com/Norkart">Norkart </a>, 
+              <a href="https://github.com/daniellsu">Dan Brown</a>, <a href="https://github.com/ardhi">Ardhi Lukianto</a>,
+              <a href="https://github.com/cloudybay">CloudBay</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+<! –– Sampai Sini ––>
+</html>

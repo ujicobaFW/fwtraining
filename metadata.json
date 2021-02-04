@@ -1,0 +1,12 @@
+{
+  "name": "web2",
+  "version": "1.1.0",
+  "description": "",
+  "type": "overlay",
+  "format": "png",
+  "minzoom": "16",
+  "maxzoom": "21",
+  "scale": "1.000000",
+  "bounds": [107.59177153, -6.85666824, 107.59758126, -6.85149084],
+  "profile": "mercator"
+}
